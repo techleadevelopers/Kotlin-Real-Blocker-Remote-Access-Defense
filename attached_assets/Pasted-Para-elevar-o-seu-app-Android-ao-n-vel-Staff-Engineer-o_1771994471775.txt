@@ -1,0 +1,34 @@
+Para elevar o seu app Android ao nível Staff Engineer, o Codex precisa implementar essa integração de forma nativa e resiliente. No Kotlin, usaremos Retrofit para a API REST, OkHttp para o WebSocket e StateFlow para o gerenciamento de estado em tempo real.
+
+Aqui está o Prompt Sniper configurado para a integração total no Android (Kotlin):
+
+🎯 Prompt Sniper: Kotlin Sentinel Integration — Backend Sovereignty & Zero Trust
+Role: Atue como Senior Android Developer e Engenheiro de Integração de Sistemas.
+
+Objetivo: Integrar o frontend Kotlin (Jetpack Compose) com o backend FastAPI, implementando a soberania do servidor sobre as permissões, trial de 7 dias e comunicação via WebSocket.
+
+Instruções de Integração (Kotlin/Android):
+
+1. Billing Middleware (Check-in Inicial):
+
+No LaunchedEffect da DashboardScreen, dispare uma chamada via Retrofit para GET /v1/billing/status.
+
+Enforced Paywall: Se o backend retornar 402 Payment Required ou se a lógica de 7 dias no campo trial_expired for verdadeira, acione o SubscriptionOverlay via StateFlow e desabilite o botão de "Voltar" (Back Press) do Android.
+
+2. Sentinel Heartbeat (WorkManager/Timer):
+
+Implemente um CoroutineScope com delay(30000) que envie um payload para o /v1/signals via WebSocket.
+
+Payload de Integridade: Envie o device_id (vinculado ao token), o status da AccessibilityService e se o WindowMirroring está ativo.
+
+Se o servidor responder com LOCK_SYSTEM, o app deve chamar System.exit(0) ou forçar um logout imediato limpando o SharedPreferences/DataStore.
+
+3. Authenticated WebSocket (Zero Trust):
+
+Utilize o OkHttp para abrir a conexão WebSocket passando o JWT no header Sec-WebSocket-Protocol.
+
+Comando Soberano: O app só deve mudar o estado visual para "Safe" (Verde Matrix) se receber a confirmação assinada do servidor. Caso contrário, permaneça em estado de "Auditoria".
+
+4. Global UI Sync (ViewModel):
+
+O MainViewModel deve observar o fluxo do WebSocket. Se o backend sinalizar inadimplência ou expiração, aplique um ColorFilter.grayscale() em toda a NavHost para indicar visualmente que o sistema está desativado.
