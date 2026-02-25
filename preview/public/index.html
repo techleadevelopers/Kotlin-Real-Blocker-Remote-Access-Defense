@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlockRemote — Sentinel Defense System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span class="time" id="statusTime">00:00</span>
+      <div class="status-icons">
+        <span class="signal">▮▮▮▮</span>
+        <span class="battery">⚡ 87%</span>
+      </div>
+    </div>
+
+    <div class="subscription-overlay" id="subscriptionOverlay" style="display:none">
+      <div class="sub-backdrop"></div>
+      <div class="sub-card">
+        <div class="sub-icon">🛡️</div>
+        <h2 class="sub-title">SENTINEL PRO</h2>
+        <p class="sub-desc">Full access to BlockRemote Sentinel Defense System with real-time threat detection and cloud relay.</p>
+        <div class="sub-plan">
+          <div class="plan-header">
+            <span class="plan-name">PRO PLAN</span>
+            <span class="plan-price">$4.99<span>/mo</span></span>
+          </div>
+          <ul class="plan-features">
+            <li>Real-time threat detection</li>
+            <li>Cloud sentinel relay</li>
+            <li>Unlimited audit logs</li>
+            <li>Priority alerts</li>
+          </ul>
+        </div>
+        <button class="sub-cta" onclick="dismissPaywall()">ACTIVATE LICENSE</button>
+        <p class="sub-trial">7-day free trial included</p>
+      </div>
+    </div>
+
+    <div class="screen-container" id="screenContainer">
+      <!-- Dashboard -->
+      <div class="screen active" id="screen-dashboard">
+        <div class="screen-content">
+          <h1 class="app-title" id="appTitle">BLOCKREMOTE</h1>
+          <p class="app-subtitle">SENTINEL DEFENSE SYSTEM</p>
+
+          <div class="radar-container">
+            <canvas id="radarCanvas" width="560" height="560"></canvas>
+          </div>
+
+          <div class="neon-card" id="statusCard">
+            <span class="card-label">SYSTEM STATUS</span>
+            <h2 class="status-text" id="statusText">ALL SYSTEMS NOMINAL</h2>
+            <p class="status-desc" id="statusDesc">No unauthorized remote access detected.<br>All sensors operating within parameters.</p>
+          </div>
+
+          <div class="neon-card">
+            <span class="card-label">TELEMETRY SUMMARY</span>
+            <div class="telemetry-grid">
+              <div class="telemetry-row">
+                <span class="tel-label">Threat Level</span>
+                <span class="tel-value" id="threatLevel">0%</span>
+              </div>
+              <div class="telemetry-row">
+                <span class="tel-label">Sensors Active</span>
+                <span class="tel-value lime">3/3</span>
+              </div>
+              <div class="telemetry-row">
+                <span class="tel-label">Accessibility Guard</span>
+                <span class="tel-value">ARMED</span>
+              </div>
+              <div class="telemetry-row">
+                <span class="tel-label">Network Monitor</span>
+                <span class="tel-value">ACTIVE</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="cyber-button" id="threatBtn" onclick="simulateThreat()">
+            <span class="btn-glow"></span>
+            <span class="btn-text">SIMULAR AMEAÇA</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sensor Monitor -->
+      <div class="screen" id="screen-sensors">
+        <div class="screen-content">
+          <h1 class="screen-title">SENSOR MONITOR</h1>
+          <p class="screen-subtitle">Real-time telemetry feed</p>
+
+          <div class="neon-card">
+            <span class="card-label">ACCELEROMETER X-AXIS</span>
+            <canvas id="canvasAccelX" class="sensor-canvas" width="320" height="100"></canvas>
+          </div>
+
+          <div class="neon-card">
+            <span class="card-label">ACCELEROMETER Y-AXIS</span>
+            <canvas id="canvasAccelY" class="sensor-canvas" width="320" height="100"></canvas>
+          </div>
+
+          <div class="neon-card">
+            <span class="card-label">ACCELEROMETER Z-AXIS</span>
+            <canvas id="canvasAccelZ" class="sensor-canvas" width="320" height="100"></canvas>
+          </div>
+
+          <div class="neon-card">
+            <span class="card-label">GYROSCOPE</span>
+            <canvas id="canvasGyro" class="sensor-canvas" width="320" height="80"></canvas>
+          </div>
+
+          <div class="neon-card">
+            <span class="card-label">SENSOR STATISTICS</span>
+            <div class="telemetry-grid" id="sensorStats">
+              <div class="telemetry-row"><span class="tel-label">Accel X</span><span class="tel-value" id="statAX">+0.000</span></div>
+              <div class="telemetry-row"><span class="tel-label">Accel Y</span><span class="tel-value" id="statAY">+0.000</span></div>
+              <div class="telemetry-row"><span class="tel-label">Accel Z</span><span class="tel-value" id="statAZ">+9.810</span></div>
+              <div class="telemetry-row"><span class="tel-label">Gyro X</span><span class="tel-value" id="statGX">+0.000</span></div>
+              <div class="telemetry-row"><span class="tel-label">Gyro Y</span><span class="tel-value" id="statGY">+0.000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- App Shield -->
+      <div class="screen" id="screen-shield">
+        <div class="screen-content">
+          <h1 class="screen-title">APP SHIELD</h1>
+          <p class="screen-subtitle">Accessibility service & permission guard</p>
+
+          <div class="neon-card">
+            <span class="card-label">SHIELD SUMMARY</span>
+            <div class="shield-stats">
+              <div class="shield-stat">
+                <span class="stat-value green">7</span>
+                <span class="stat-label">MONITORED</span>
+              </div>
+              <div class="shield-stat">
+                <span class="stat-value red" id="blockedCount">1</span>
+                <span class="stat-label">BLOCKED</span>
+              </div>
+              <div class="shield-stat">
+                <span class="stat-value red">1</span>
+                <span class="stat-label">CRITICAL</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="permissionsList"></div>
+        </div>
+      </div>
+
+      <!-- Audit Logs -->
+      <div class="screen" id="screen-logs">
+        <div class="screen-content">
+          <h1 class="screen-title">AUDIT LOGS</h1>
+          <p class="screen-subtitle">System event terminal</p>
+
+          <div class="terminal-container">
+            <div class="terminal-header">
+              root@blockremote:~# tail -f /var/log/sentinel.log
+            </div>
+            <div class="terminal-body" id="terminalBody"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="screen" id="screen-settings">
+        <div class="screen-content">
+          <h1 class="screen-title">SETTINGS</h1>
+          <p class="screen-subtitle">Detection & sensitivity configuration</p>
+
+          <div class="neon-card">
+            <span class="card-label">DETECTION THRESHOLDS</span>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Accessibility Detection Threshold</span>
+                <span class="slider-value" id="thresholdVal">70%</span>
+              </div>
+              <input type="range" class="cyber-slider" id="thresholdSlider" min="10" max="100" value="70" oninput="updateThreshold(this.value)">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Sensor Sensitivity</span>
+                <span class="slider-value" id="sensitivityVal">50%</span>
+              </div>
+              <input type="range" class="cyber-slider" id="sensitivitySlider" min="10" max="100" value="50" oninput="updateSensitivity(this.value)">
+            </div>
+          </div>
+
+          <div class="neon-card">
+            <span class="card-label">MODULE CONTROL</span>
+            <div class="switch-row" onclick="toggleSwitch('motion')">
+              <div class="switch-info">
+                <span class="switch-label">Motion Detection</span>
+                <span class="switch-sub">Accelerometer & gyroscope anomaly analysis</span>
+              </div>
+              <div class="sentinel-switch active" id="switch-motion"><div class="switch-thumb"></div></div>
+            </div>
+            <div class="switch-row" onclick="toggleSwitch('network')">
+              <div class="switch-info">
+                <span class="switch-label">Network Monitor</span>
+                <span class="switch-sub">Outbound connection traffic analysis</span>
+              </div>
+              <div class="sentinel-switch active" id="switch-network"><div class="switch-thumb"></div></div>
+            </div>
+            <div class="switch-row" onclick="toggleSwitch('a11y')">
+              <div class="switch-info">
+                <span class="switch-label">Accessibility Guard</span>
+                <span class="switch-sub">Service injection & overlay detection</span>
+              </div>
+              <div class="sentinel-switch active" id="switch-a11y"><div class="switch-thumb"></div></div>
+            </div>
+          </div>
+
+          <div class="neon-card">
+            <span class="card-label">CONNECTION</span>
+            <div class="telemetry-grid">
+              <div class="telemetry-row"><span class="tel-label">Relay</span><span class="tel-value lime" id="relayStatus">CONNECTED</span></div>
+              <div class="telemetry-row"><span class="tel-label">Protocol</span><span class="tel-value lime">Zero-Trust WSS</span></div>
+              <div class="telemetry-row"><span class="tel-label">License</span><span class="tel-value lime" id="licenseStatus">ACTIVE</span></div>
+              <div class="telemetry-row"><span class="tel-label">Heartbeat</span><span class="tel-value lime">30s interval</span></div>
+              <div class="telemetry-row"><span class="tel-label">API</span><span class="tel-value lime">api.blockremote.io/v1</span></div>
+            </div>
+          </div>
+
+          <div class="neon-card">
+            <span class="card-label">SYSTEM INFO</span>
+            <div class="telemetry-grid">
+              <div class="telemetry-row"><span class="tel-label">Version</span><span class="tel-value lime">2.0.0-alpha</span></div>
+              <div class="telemetry-row"><span class="tel-label">Engine</span><span class="tel-value lime">Sentinel Core v3</span></div>
+              <div class="telemetry-row"><span class="tel-label">Sensor Polling</span><span class="tel-value lime">20Hz (GAME)</span></div>
+              <div class="telemetry-row"><span class="tel-label">Log Buffer</span><span class="tel-value lime">200 entries</span></div>
+              <div class="telemetry-row"><span class="tel-label">Architecture</span><span class="tel-value lime">Clean MVVM</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ws-status-bar" id="wsStatusBar">
+      <div class="ws-indicator">
+        <div class="ws-dot connected" id="wsDot"></div>
+        <span id="wsLabel">SENTINEL RELAY</span>
+      </div>
+      <span class="ws-trust" id="wsTrust">ZERO-TRUST</span>
+    </div>
+
+    <nav class="bottom-bar">
+      <div class="nav-item active" onclick="switchScreen('dashboard')">
+        <div class="nav-dot"></div>
+        <span>DASHBOARD</span>
+      </div>
+      <div class="nav-item" onclick="switchScreen('sensors')">
+        <div class="nav-dot"></div>
+        <span>SENSORS</span>
+      </div>
+      <div class="nav-item" onclick="switchScreen('shield')">
+        <div class="nav-dot"></div>
+        <span>SHIELD</span>
+      </div>
+      <div class="nav-item" onclick="switchScreen('logs')">
+        <div class="nav-dot"></div>
+        <span>LOGS</span>
+      </div>
+      <div class="nav-item" onclick="switchScreen('settings')">
+        <div class="nav-dot"></div>
+        <span>CONFIG</span>
+      </div>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
